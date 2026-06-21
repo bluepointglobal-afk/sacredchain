@@ -1,46 +1,21 @@
-import 'dotenv/config';
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import rateLimit from 'express-rate-limit';
+import http from 'http';
+import env from './config/env.js';
 import { connectDB } from './config/db.js';
-import routes from './routes/index.js';
-import { notFound, errorHandler } from './middleware/error.js';
-
-const app = express();
-const PORT = process.env.PORT || 5000;
-
-app.use(express.json({ limit: '1mb' }));
-app.use(
-  cors({
-    origin: process.env.CLIENT_ORIGIN ? process.env.CLIENT_ORIGIN.split(',') : '*',
-    credentials: true,
-  })
-);
-if (process.env.NODE_ENV !== 'test') app.use(morgan('dev'));
-
-// Basic rate limit on the API surface
-app.use(
-  '/api',
-  rateLimit({ windowMs: 60 * 1000, max: 200, standardHeaders: true, legacyHeaders: false })
-);
-
-app.get('/', (req, res) => res.json({ service: 'Sacred Knowledge API', docs: '/api/health' }));
-app.use('/api', routes);
-
-app.use(notFound);
-app.use(errorHandler);
+import { createApp } from './app.js';
+import { attachSocket } from './realtime/socket.js';
+import logger from './utils/logger.js';
 
 async function start() {
   try {
-    await connectDB(process.env.MONGODB_URI);
-    app.listen(PORT, () => console.log(`[server] Sacred Knowledge API listening on :${PORT}`));
+    await connectDB(env.mongoUri);
+    const app = createApp();
+    const server = http.createServer(app);
+    attachSocket(server);
+    server.listen(env.port, () => logger.info(`[server] Sacred Knowledge API listening on :${env.port}`));
   } catch (err) {
-    console.error('[server] failed to start:', err.message);
+    logger.error({ err: err.message }, '[server] failed to start');
     process.exit(1);
   }
 }
 
 start();
-
-export default app;

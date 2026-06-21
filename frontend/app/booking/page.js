@@ -37,6 +37,8 @@ function BookingInner() {
   const [time, setTime] = useState('7:00 PM');
   const [sessionType, setSessionType] = useState('video');
   const [notes, setNotes] = useState('');
+  const [booking, setBooking] = useState(null);
+  const [bookingError, setBookingError] = useState('');
   const days = useMemo(() => nextDays(7), []);
 
   useEffect(() => {
@@ -44,12 +46,16 @@ function BookingInner() {
   }, [slug]);
 
   async function confirm() {
+    setBookingError('');
     try {
       if (user) {
-        await Api.createBooking({ teacherSlug: slug, day: days[day]?.label, time, sessionType, notes, isTrial: true });
+        const { booking: b } = await Api.createBooking({ teacherSlug: slug, day: days[day]?.label, time, sessionType, notes, isTrial: true });
+        setBooking(b);
       }
-    } catch {}
-    setStep(4);
+      setStep(4);
+    } catch (e) {
+      setBookingError(e.message || 'Could not complete booking');
+    }
   }
 
   if (!teacher) {
@@ -143,6 +149,8 @@ function BookingInner() {
                     <input placeholder="CVC" className="w-1/2 rounded-[11px] border border-[#E5DFD1] px-4 py-3 text-[15px] outline-none focus:border-brand" />
                   </div>
                 </div>
+                {bookingError && <p className="mt-3 text-[13.5px] font-semibold text-live">{bookingError}</p>}
+                {!user && <p className="mt-3 rounded-[11px] bg-brand-tint px-4 py-3 text-[12.5px] text-[#3C6B58]">Tip: log in first to save this booking and join the live room.</p>}
                 <div className="mt-6 flex gap-3">
                   <button onClick={() => setStep(2)} className="btn-ghost flex-1 !py-3.5">Back</button>
                   <button onClick={confirm} className="btn-primary flex-1 !py-3.5">Confirm booking</button>
@@ -157,8 +165,9 @@ function BookingInner() {
                 </div>
                 <h2 className="mb-2 text-[24px] font-extrabold text-ink">You’re booked!</h2>
                 <p className="mb-6 text-[15px] text-body">Your trial with {teacher.name} is confirmed for {days[day]?.label} at {time}.</p>
-                <div className="flex justify-center gap-3">
-                  <Link href="/dashboard" className="btn-primary !py-3.5">Go to dashboard</Link>
+                <div className="flex flex-wrap justify-center gap-3">
+                  {booking?._id && <Link href={`/session?bookingId=${booking._id}`} className="btn-primary !py-3.5">Join the room</Link>}
+                  <Link href="/dashboard" className="btn-ghost !py-3.5">Go to dashboard</Link>
                   <Link href="/explore" className="btn-ghost !py-3.5">Browse more</Link>
                 </div>
               </div>

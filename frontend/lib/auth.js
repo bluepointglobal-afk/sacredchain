@@ -12,13 +12,20 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let active = true;
     async function bootstrap() {
-      if (!getToken()) {
-        setLoading(false);
-        return;
-      }
       try {
-        const { user: u } = await Api.me();
-        if (active) setUser(u);
+        // If we have an access token, try it; otherwise attempt a silent refresh.
+        if (!getToken()) {
+          try {
+            const { token } = await Api.refresh();
+            if (token) setToken(token);
+          } catch {
+            /* no session */
+          }
+        }
+        if (getToken()) {
+          const { user: u } = await Api.me();
+          if (active) setUser(u);
+        }
       } catch {
         setToken(null);
       } finally {
@@ -26,9 +33,7 @@ export function AuthProvider({ children }) {
       }
     }
     bootstrap();
-    return () => {
-      active = false;
-    };
+    return () => { active = false; };
   }, []);
 
   const login = useCallback(async (email, password) => {
@@ -45,7 +50,8 @@ export function AuthProvider({ children }) {
     return u;
   }, []);
 
-  const logout = useCallback(() => {
+  const logout = useCallback(async () => {
+    try { await Api.logout(); } catch { /* ignore */ }
     setToken(null);
     setUser(null);
   }, []);

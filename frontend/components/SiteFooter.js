@@ -39,8 +39,12 @@ export default function SiteFooter() {
         ))}
       </div>
       <div className="border-t border-white/10">
-        <div className="container-x py-5 text-[13px] text-white/55">
-          © {new Date().getFullYear()} Sacred Knowledge. Learning with adab, in sha’ Allah.
+        <div className="container-x flex flex-wrap items-center justify-between gap-3 py-5 text-[13px] text-white/55">
+          <span>© {new Date().getFullYear()} Sacred Knowledge. Learning with adab, in sha’ Allah.</span>
+          <span className="flex gap-4">
+            <Link href="/legal/terms" className="hover:text-white">Terms</Link>
+            <Link href="/legal/privacy" className="hover:text-white">Privacy</Link>
+          </span>
         </div>
       </div>
     </footer>

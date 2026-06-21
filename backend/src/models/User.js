@@ -10,6 +10,17 @@ const onboardingSchema = new mongoose.Schema(
   { _id: false }
 );
 
+// Hashed refresh tokens for rotation / revocation.
+const refreshTokenSchema = new mongoose.Schema(
+  {
+    jti: String,
+    hash: String,
+    expiresAt: Date,
+    createdAt: { type: Date, default: Date.now },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
@@ -17,6 +28,17 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     passwordHash: { type: String, required: true },
     role: { type: String, enum: ['learner', 'teacher', 'admin'], default: 'learner' },
+
+    emailVerified: { type: Boolean, default: false },
+    verifyTokenHash: { type: String, default: null },
+    resetTokenHash: { type: String, default: null },
+    resetTokenExpires: { type: Date, default: null },
+
+    refreshTokens: { type: [refreshTokenSchema], default: [] },
+
+    stripeCustomerId: { type: String, default: null },
+    teacherProfile: { type: mongoose.Schema.Types.ObjectId, ref: 'Teacher', default: null },
+
     onboarding: { type: onboardingSchema, default: () => ({}) },
     favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Teacher' }],
   },
@@ -24,7 +46,7 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.methods.setPassword = async function setPassword(password) {
-  this.passwordHash = await bcrypt.hash(password, 10);
+  this.passwordHash = await bcrypt.hash(password, 12);
 };
 
 userSchema.methods.verifyPassword = function verifyPassword(password) {
@@ -38,8 +60,10 @@ userSchema.methods.toSafeJSON = function toSafeJSON() {
     first: this.first || this.name.split(' ')[0],
     email: this.email,
     role: this.role,
+    emailVerified: this.emailVerified,
     onboarding: this.onboarding,
     favourites: this.favourites,
+    teacherProfile: this.teacherProfile,
   };
 };
 

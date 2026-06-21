@@ -21,7 +21,7 @@ const NAV2 = [
 export default function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
 
   const Item = ({ href, label, icon }) => {
     const active = pathname === href.split('?')[0] && (href === '/dashboard' ? !href.includes('page=') : true);
@@ -50,8 +50,11 @@ export default function DashboardSidebar() {
       <div className="my-4 border-t border-line" />
       <nav className="space-y-1">
         <Item href="/explore" label="Find teachers" icon="search" />
+        <Item href="/account" label="Account" icon="user" />
+        {user?.role === 'teacher' && <Item href="/teacher" label="Teacher studio" icon="bookOpen" />}
+        {user?.role === 'admin' && <Item href="/admin" label="Admin console" icon="shield" />}
         <button
-          onClick={() => { logout(); router.push('/'); }}
+          onClick={async () => { await logout(); router.push('/'); }}
           className="flex w-full items-center gap-3 rounded-[11px] px-3.5 py-2.5 text-[14.5px] font-medium text-[#525A50] hover:bg-[#F6F7F3]"
         >
           <Icon name="logout" size={18} /> Log out

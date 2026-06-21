@@ -7,6 +7,7 @@ import { SiteShell } from '@/components/Shell';
 import { Icon, Star } from '@/components/icons';
 import { Api } from '@/lib/api';
 import { useToast } from '@/components/Toast';
+import { useAuth } from '@/lib/auth';
 
 const TABS = [['overview', 'Overview'], ['curriculum', 'Curriculum'], ['teacher', 'Teacher'], ['faq', 'FAQ']];
 
@@ -14,6 +15,7 @@ export default function BundleDetailPage() {
   const { slug } = useParams();
   const router = useRouter();
   const { flash } = useToast();
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [error, setError] = useState(false);
   const [tab, setTab] = useState('overview');
@@ -124,7 +126,7 @@ export default function BundleDetailPage() {
               <span className="text-[14px] text-muted">total</span>
             </div>
             <p className="mb-5 text-[13.5px] text-body">{b.weeks} weeks · {b.perWeek} sessions/week · {b.mins} min each</p>
-            <button onClick={() => flash('Enrolment started — complete checkout to begin')} className="btn-primary mb-2.5 w-full !py-3.5">Enroll now</button>
+            <button onClick={() => (user ? router.push(`/checkout?kind=bundle&slug=${b.slug}`) : router.push(`/signup?next=${encodeURIComponent(`/checkout?kind=bundle&slug=${b.slug}`)}`))} className="btn-primary mb-2.5 w-full !py-3.5">Enroll now</button>
             {teacher && <button onClick={() => router.push(`/booking?teacher=${teacher.slug}`)} className="btn-ghost w-full !py-3.5">Book a trial first</button>}
             <ul className="mt-5 space-y-2.5 border-t border-line pt-5 text-[13.5px] text-body">
               {(b.includes || []).slice(0, 4).map((inc) => (

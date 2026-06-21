@@ -7,6 +7,7 @@ import { SiteShell } from '@/components/Shell';
 import { Icon, Star } from '@/components/icons';
 import { Api } from '@/lib/api';
 import { useToast } from '@/components/Toast';
+import { useAuth } from '@/lib/auth';
 
 const TABS = [['about', 'About'], ['quals', 'Qualifications'], ['reviews', 'Reviews'], ['availability', 'Availability']];
 
@@ -14,13 +15,31 @@ export default function TeacherProfilePage() {
   const { slug } = useParams();
   const router = useRouter();
   const { flash } = useToast();
+  const { user } = useAuth();
   const [teacher, setTeacher] = useState(null);
   const [tab, setTab] = useState('about');
   const [error, setError] = useState(false);
+  const [faved, setFaved] = useState(false);
 
   useEffect(() => {
     Api.teacher(slug).then((d) => setTeacher(d.teacher)).catch(() => setError(true));
   }, [slug]);
+
+  useEffect(() => {
+    if (user && teacher?._id) setFaved((user.favourites || []).map(String).includes(String(teacher._id)));
+  }, [user, teacher]);
+
+  async function toggleFav() {
+    if (!user) { router.push('/login'); return; }
+    try {
+      const { favourites } = await Api.toggleFavourite(teacher._id);
+      const isFav = favourites.map(String).includes(String(teacher._id));
+      setFaved(isFav);
+      flash(isFav ? 'Saved to favourites' : 'Removed from favourites');
+    } catch (e) {
+      flash(e.message);
+    }
+  }
 
   if (error) return <SiteShell><div className="container-x py-24 text-center text-body">Teacher not found.</div></SiteShell>;
   if (!teacher) return <SiteShell><div className="container-x py-24 text-center text-muted">Loading…</div></SiteShell>;
@@ -143,8 +162,8 @@ export default function TeacherProfilePage() {
               </div>
               <p className="mb-5 text-[13.5px] text-body">First trial lesson is free — no commitment.</p>
               <button onClick={() => router.push(`/booking?teacher=${t.slug}`)} className="btn-primary mb-2.5 w-full !py-3.5">Book a trial lesson</button>
-              <button onClick={() => flash('Saved to favourites')} className="btn-ghost w-full !py-3.5">
-                <Icon name="heart" size={16} /> Save to favourites
+              <button onClick={toggleFav} className={`w-full rounded-[11px] border py-3.5 text-[14.5px] font-bold sk-btn ${faved ? 'border-brand bg-brand-tint text-brand' : 'border-[#DCE3DB] bg-white text-brand'}`}>
+                <span className="inline-flex items-center gap-2"><Icon name="heart" size={16} /> {faved ? 'Saved ✓' : 'Save to favourites'}</span>
               </button>
               <div className="mt-5 space-y-2.5 border-t border-line pt-5 text-[13.5px]">
                 <Fact label="Languages" value={t.languages.join(', ')} />

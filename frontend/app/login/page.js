@@ -34,6 +34,9 @@ export default function LoginPage() {
         <Field label="Email" type="email" value={email} onChange={setEmail} placeholder="you@example.com" />
         <Field label="Password" type="password" value={password} onChange={setPassword} placeholder="••••••••" />
         {error && <p className="text-[13.5px] font-semibold text-live">{error}</p>}
+        <div className="text-right">
+          <Link href="/forgot-password" className="text-[13px] font-semibold text-brand hover:underline">Forgot password?</Link>
+        </div>
         <button disabled={loading} className="btn-primary w-full !py-3.5 disabled:opacity-60">
           {loading ? 'Signing in…' : 'Log in'}
         </button>

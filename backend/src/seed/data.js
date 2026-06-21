@@ -387,6 +387,23 @@ export const demoUser = {
   onboarding: { pathway: 'student', completed: true, answers: { subject: 'Quran', level: 'foundation', goal: 'memorize', gender: 'all', language: 'English' } },
 };
 
+// Demo admin (email: admin@example.com / password: password123)
+export const demoAdmin = {
+  name: 'Platform Admin',
+  first: 'Admin',
+  email: 'admin@example.com',
+  password: 'password123',
+  role: 'admin',
+};
+
+// Default recurring availability slots applied to every seeded teacher
+// dow: 0=Sun .. 6=Sat, 24h times.
+export const defaultSlots = [
+  { dow: 1, start: '19:00', end: '21:00' },
+  { dow: 3, start: '18:00', end: '20:00' },
+  { dow: 6, start: '10:00', end: '12:00' },
+];
+
 export const demoJournal = [
   { date: 'June 12, 2023', session: 'Quran Memorization · Surah Al-Mulk (Session 8)', teacher: 'Sheikh Ahmad Al-Nouri', private: true, body: "Today's session on Surah Al-Mulk was deeply moving. The verse about Allah's knowledge of what's in our hearts (verse 13) made me reflect on my own intentions and actions.", tags: ['reflection', 'quran', 'intention'] },
   { date: 'June 10, 2023', session: 'Hadith Studies · 40 Nawawi (Session 3)', teacher: 'Ustadha Maryam Hassan', private: false, body: 'The hadith we studied today about innovations in religion has made me think more carefully about distinguishing between cultural practices and authentic Islamic teachings.', tags: ['question', 'hadith', 'fiqh'] },
