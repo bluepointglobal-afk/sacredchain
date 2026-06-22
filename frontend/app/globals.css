@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-jakarta: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+  --font-amiri: 'Amiri', serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-jakarta);
+  color: #15241d;
+  -webkit-font-smoothing: antialiased;
+  background: #fff;
+}
+
+::selection {
+  background: #0f5c46;
+  color: #fff;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-thumb {
+  background: #d7ddd6;
+  border-radius: 8px;
+  border: 3px solid #fff;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #bdc7bc;
+}
+
+@layer components {
+  .sk-card {
+    @apply transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(.2,.7,.3,1)];
+  }
+  .sk-card:hover {
+    @apply -translate-y-1 shadow-card-hover;
+    border-color: #cfe3d8;
+  }
+  .sk-card:hover .sk-zoom {
+    transform: scale(1.06);
+  }
+  .sk-zoom {
+    @apply transition-transform duration-500 ease-[cubic-bezier(.2,.7,.3,1)];
+  }
+  .sk-btn {
+    @apply transition-[transform,box-shadow,background,color,border-color] duration-150;
+  }
+  .sk-btn:hover {
+    transform: translateY(-1px);
+  }
+  .sk-btn:active {
+    transform: translateY(0);
+  }
+  .container-x {
+    @apply mx-auto max-w-[1200px] px-7;
+  }
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-[11px] bg-brand px-5 py-3 text-[14.5px] font-bold text-white shadow-btn sk-btn;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-[11px] border border-[#DCE3DB] bg-white px-5 py-3 text-[14.5px] font-bold text-brand sk-btn;
+  }
+  .btn-indigo {
+    @apply inline-flex items-center justify-center gap-2 rounded-[11px] bg-chain px-5 py-3 text-[14.5px] font-bold text-white sk-btn;
+  }
+  .chip {
+    @apply rounded-[7px] bg-brand-tint2 px-[9px] py-1 text-[11.5px] font-semibold text-[#3C6B58];
+  }
+}
