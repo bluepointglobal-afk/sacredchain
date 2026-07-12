@@ -19,7 +19,7 @@ export function Icon({ name, size = 20, className = '', ...rest }) {
 
 export function Star({ size = 15, className = '' }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="#F5A524" className={className}>
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="#C99A2E" className={className}>
       <path d="M12 2l2.9 6.26 6.6.96-4.8 4.68 1.13 6.6L12 17.4 6.17 20.5l1.13-6.6L2.5 9.22l6.6-.96L12 2z" />
     </svg>
   );

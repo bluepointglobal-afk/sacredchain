@@ -4,6 +4,8 @@
 
 :root {
   --font-jakarta: 'Plus Jakarta Sans', -apple-system, system-ui, sans-serif;
+  --font-display: 'Sora', var(--font-jakarta);
+  --font-arabic: 'IBM Plex Sans Arabic', serif;
   --font-amiri: 'Amiri', serif;
 }
 
@@ -15,13 +17,14 @@ body {
 
 body {
   font-family: var(--font-jakarta);
-  color: #15241d;
+  color: #0f1211;
   -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
   background: #fff;
 }
 
 ::selection {
-  background: #0f5c46;
+  background: #0e6b4f;
   color: #fff;
 }
 
@@ -30,24 +33,92 @@ body {
   height: 11px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #d7ddd6;
+  background: #d9d5c8;
   border-radius: 8px;
   border: 3px solid #fff;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #bdc7bc;
+  background: #c3bda9;
+}
+
+/* Accessible focus ring on every interactive element */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2.5px solid #0e6b4f;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Respect reduced-motion: disable entrance/scroll animation */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer base {
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .font-arabic {
+    font-family: var(--font-arabic);
+  }
 }
 
 @layer components {
+  /* ---------- Layout ---------- */
+  .container-x {
+    @apply mx-auto max-w-[1200px] px-6 sm:px-7;
+  }
+  .section-y {
+    padding-block: clamp(4rem, 8vw, 7rem);
+  }
+
+  /* ---------- Type ---------- */
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[13px] font-bold uppercase tracking-[0.08em] text-gold-ink;
+  }
+  .h1-hero {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2.75rem, 6vw, 5rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    color: #0f1211;
+  }
+  .h2-section {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(2rem, 4vw, 3.25rem);
+    line-height: 1.05;
+    letter-spacing: -0.015em;
+    color: #0f1211;
+  }
+
+  /* ---------- Motion helpers ---------- */
+  .reveal {
+    @apply opacity-0;
+    animation: fadeUp 0.5s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+  }
   .sk-card {
     @apply transition-[transform,box-shadow,border-color] duration-200 ease-[cubic-bezier(.2,.7,.3,1)];
   }
   .sk-card:hover {
-    @apply -translate-y-1 shadow-card-hover;
-    border-color: #cfe3d8;
+    @apply -translate-y-0.5 shadow-card-hover;
+    border-color: #0e6b4f;
   }
   .sk-card:hover .sk-zoom {
-    transform: scale(1.06);
+    transform: scale(1.05);
   }
   .sk-zoom {
     @apply transition-transform duration-500 ease-[cubic-bezier(.2,.7,.3,1)];
@@ -61,19 +132,43 @@ body {
   .sk-btn:active {
     transform: translateY(0);
   }
-  .container-x {
-    @apply mx-auto max-w-[1200px] px-7;
+
+  /* ---------- Buttons (pill, chunky, high contrast) ---------- */
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[15px] font-semibold sk-btn;
   }
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2 rounded-[11px] bg-brand px-5 py-3 text-[14.5px] font-bold text-white shadow-btn sk-btn;
+    @apply btn bg-emerald text-white shadow-btn hover:bg-emerald-600;
+  }
+  .btn-secondary {
+    @apply btn border-[1.5px] border-emerald bg-transparent text-emerald hover:bg-emerald-tint;
+  }
+  .btn-dark {
+    @apply btn bg-ink text-white hover:bg-black;
   }
   .btn-ghost {
-    @apply inline-flex items-center justify-center gap-2 rounded-[11px] border border-[#DCE3DB] bg-white px-5 py-3 text-[14.5px] font-bold text-brand sk-btn;
+    @apply btn bg-transparent text-ink hover:bg-emerald-tint;
+  }
+  .btn-white {
+    @apply btn bg-white text-emerald hover:bg-emerald-tint;
+  }
+  .btn-outline-white {
+    @apply btn border-[1.5px] border-white/50 bg-transparent text-white hover:bg-white/10;
   }
   .btn-indigo {
-    @apply inline-flex items-center justify-center gap-2 rounded-[11px] bg-chain px-5 py-3 text-[14.5px] font-bold text-white sk-btn;
+    @apply btn bg-chain text-white hover:bg-chain-deep;
+  }
+
+  /* ---------- Chips / pills ---------- */
+  .pill {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-emerald-tint px-3.5 py-1.5 text-[13px] font-semibold text-emerald;
   }
   .chip {
-    @apply rounded-[7px] bg-brand-tint2 px-[9px] py-1 text-[11.5px] font-semibold text-[#3C6B58];
+    @apply rounded-full bg-emerald-tint px-3 py-1 text-[12px] font-semibold text-emerald;
+  }
+
+  /* ---------- Cards ---------- */
+  .card-flat {
+    @apply rounded-card border border-line bg-paper shadow-card;
   }
 }
