@@ -3,9 +3,9 @@ import 'dotenv/config';
 const env = {
   nodeEnv: process.env.NODE_ENV || 'development',
   isProd: process.env.NODE_ENV === 'production',
-  port: parseInt(process.env.PORT || '5000', 10),
-  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
-  publicApiUrl: process.env.PUBLIC_API_URL || 'http://localhost:5000',
+  port: parseInt(process.env.PORT || '5100', 10),
+  clientOrigin: process.env.CLIENT_ORIGIN || 'http://localhost:3100',
+  publicApiUrl: process.env.PUBLIC_API_URL || 'http://localhost:5100',
 
   mongoUri: process.env.MONGODB_URI,
 

@@ -7,7 +7,7 @@ function socketOrigin() {
     const u = new URL(API_URL);
     return `${u.protocol}//${u.host}`;
   } catch {
-    return 'http://localhost:5000';
+    return 'http://localhost:5100';
   }
 }
 
